@@ -15,6 +15,7 @@ const Viewer = () => {
   const extrudingRef = useRef(extrudingMode);
   const moveRef = useRef(moveMode);
   const vertexEditRef = useRef(vertexEditMode);
+  const initialize = useRef(false);
 
   useEffect(() => {
     drawingRef.current = drawingMode;
@@ -200,11 +201,30 @@ const Viewer = () => {
 
   return (
     <div style={{ position: "relative" }}>
-      <canvas ref={canvasRef} style={{ width: "100%", height: "100vh" }} />
+      <canvas ref={canvasRef} style={{ width: "100vw", height: "100vh" }} />
       <div className="controls">
-        <button className="ribbon-button" onClick={() => setDrawingMode(true)}>Draw</button>
-        <button className="ribbon-button" onClick={() => setExtrudingMode(true)}>Extrude</button>
-        <button className="ribbon-button" onClick={() => setMoveMode((prev) => !prev)}>Move</button>
+        <button
+          className="ribbon-button"
+          onClick={() => { setDrawingMode(true); initialize.current = true; }}
+        >
+          Draw
+        </button>
+        <button
+          className="ribbon-button"
+          onClick={() => setExtrudingMode(true)}
+          disabled={!initialize.current}
+          style={{ backgroundColor: (!initialize.current) ? "red" : "" }}
+        >
+          Extrude
+        </button>
+        <button
+          className="ribbon-button"
+          onClick={() => setMoveMode((prev) => !prev)}
+          disabled={!initialize.current}
+          style={{ backgroundColor: (!initialize.current) ? "red" : "" }}
+        >
+          Move
+        </button>
         <button
           className="ribbon-button"
           onClick={() =>
@@ -216,6 +236,8 @@ const Viewer = () => {
               return !prev;
             })
           }
+          disabled={!initialize.current}
+          style={{ backgroundColor: (!initialize.current) ? "red" : "" }}
         >
           Edit Vertex
         </button>
