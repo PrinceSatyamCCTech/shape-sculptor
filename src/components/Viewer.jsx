@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as BABYLON from "@babylonjs/core";
-import * as GUI from "@babylonjs/gui";
 import earcut from "earcut";
+import "./Viewer.css";
 
 const Viewer = () => {
   const canvasRef = useRef(null);
@@ -42,6 +42,8 @@ const Viewer = () => {
   useEffect(() => {
     const engine = new BABYLON.Engine(canvasRef.current, true);
     const scene = new BABYLON.Scene(engine);
+
+    scene.clearColor = new BABYLON.Color4(1, 1, 1, 1);
 
     const camera = new BABYLON.ArcRotateCamera(
       "camera",
@@ -185,63 +187,6 @@ const Viewer = () => {
       }
     };
 
-    const advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
-
-    const buttonContainer = new GUI.StackPanel();
-    buttonContainer.width = "500px";
-    buttonContainer.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-    buttonContainer.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-    buttonContainer.paddingTopInPixels = "500px";
-    advancedTexture.addControl(buttonContainer);
-
-    const drawButton = GUI.Button.CreateSimpleButton("drawButton", "Draw");
-    drawButton.width = "150px";
-    drawButton.height = "100px";
-    drawButton.color = "white";
-    drawButton.paddingTop = "30px";
-    drawButton.background = "green";
-    drawButton.onPointerDownObservable.add(() => {
-      setDrawingMode(true);
-    });
-    buttonContainer.addControl(drawButton);
-
-    const extrudeButton = GUI.Button.CreateSimpleButton("extrudeButton", "Extrude");
-    extrudeButton.width = "150px";
-    extrudeButton.height = "100px";
-    extrudeButton.color = "white";
-    extrudeButton.background = "brown";
-    extrudeButton.paddingTop = "30px";
-    extrudeButton.onPointerDownObservable.add(() => setExtrudingMode(true));
-    buttonContainer.addControl(extrudeButton);
-
-    const moveButton = GUI.Button.CreateSimpleButton("moveButton", "Move");
-    moveButton.width = "150px";
-    moveButton.height = "100px";
-    moveButton.color = "white";
-    moveButton.background = "blue";
-    moveButton.paddingTop = "30px";
-    moveButton.onPointerDownObservable.add(() => {
-      setMoveMode((prev) => !prev);
-    });
-    buttonContainer.addControl(moveButton);
-
-    const vertexEditButton = GUI.Button.CreateSimpleButton("vertexEditButton", "Edit Vertex");
-    vertexEditButton.width = "150px";
-    vertexEditButton.height = "100px";
-    vertexEditButton.color = "white";
-    vertexEditButton.background = "orange";
-    vertexEditButton.paddingTop = "30px";
-    vertexEditButton.onPointerDownObservable.add(() => {
-      setVertexEditMode((prev) => {
-        if (prev) {
-          vertexPoints.forEach((vertex) => vertex.dispose());
-          vertexPoints = [];
-        }
-        return !prev;
-      });
-    });
-    buttonContainer.addControl(vertexEditButton);
-
     return () => {
       window.removeEventListener("resize", resizeHandler);
       scene.dispose();
@@ -250,10 +195,28 @@ const Viewer = () => {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ width: "100vw", height: "100vh", overflow: "hidden" }}
-    />
+    <div style={{ position: "relative" }}>
+      <canvas ref={canvasRef} style={{ width: "100%", height: "100vh" }} />
+      <div className="controls">
+        <button className="ribbon-button" onClick={() => setDrawingMode(true)}>Draw</button>
+        <button className="ribbon-button" onClick={() => setExtrudingMode(true)}>Extrude</button>
+        <button className="ribbon-button" onClick={() => setMoveMode((prev) => !prev)}>Move</button>
+        <button
+          className="ribbon-button"
+          onClick={() =>
+            setVertexEditMode((prev) => {
+              if (prev) {
+                vertexPoints.forEach((vertex) => vertex.dispose());
+                vertexPoints = [];
+              }
+              return !prev;
+            })
+          }
+        >
+          Edit Vertex
+        </button>
+      </div>
+    </div>
   );
 };
 
