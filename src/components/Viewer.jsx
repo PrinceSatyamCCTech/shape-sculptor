@@ -85,6 +85,7 @@ const Viewer = () => {
         }
       }
 
+      // Create a polygon shape from the drawing points
       if (drawingRef.current && event.button === 2 && drawingPoints.length >= 3) {
         polygonShape.current = BABYLON.MeshBuilder.CreatePolygon(
           "polygonShape",
@@ -102,6 +103,7 @@ const Viewer = () => {
         setDrawingMode(false);
       }
 
+      // Extrude the polygon shape
       if (extrudingRef.current && event.button === 0) {
         const pickResult = scene.pick(scene.pointerX, scene.pointerY);
         if (pickResult.hit && pickResult.pickedMesh === polygonShape.current) {
@@ -124,6 +126,7 @@ const Viewer = () => {
         }
       }
 
+      // Move the extruded shape
       const pickResult = scene.pick(scene.pointerX, scene.pointerY);
       if (pickResult.hit && pickResult.pickedMesh === extrudedShape.current && moveRef.current) {
         pickResult.pickedMesh.addBehavior(new BABYLON.PointerDragBehavior({ dragPlaneNormal: BABYLON.Vector3.Up() }));
@@ -131,6 +134,7 @@ const Viewer = () => {
         pickResult.pickedMesh.removeBehavior(new BABYLON.PointerDragBehavior({ dragPlaneNormal: BABYLON.Vector3.Up() }));
       }
 
+      // Edit the vertices of the extruded shape
       if (vertexEditRef.current) {
         const pickResult = scene.pick(scene.pointerX, scene.pointerY);
         if (pickResult.hit && pickResult.pickedMesh === extrudedShape.current && event.button === 0) {
